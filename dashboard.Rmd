@@ -1,34 +1,147 @@
 ---
-title: "Untitled"
+title: "English Rock VS. Chinese Rock"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+    storyboard: true
 ---
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
 ```
 
-Column {data-width=650}
+Main idea of the research {data-width=650}
 -----------------------------------------------------------------------
 
-### Chart A
+### What is my research?
 
 ```{r}
 
 ```
+
+-----------------------------------------------------------------------
+I created a personal playlist for the corpus which is a collection of English and Chinese rock music. I gathered a bunch of very popular rock albums for both languages, English rock from 1950s and Chinese rock from 1980s. I picked 10 rock albums in total (5 for each English and Chinese) which I gathered diverse ranking list throughout the internet and combined with a bit of my personal preferences. Since the Western music entered Chinese society relatively late, and Chinese musicians were mainly learning, absorbing and fusing with local taste, it is the best to compare the general rock&roll taste for both cultures. I would like to compare, across these top rated rock albums from both cultures, how different they have in the type of rock music, the topic and theses they  wrote about, instrument they used, and how they deeper influenced pop musics later on? The limitation is that, since it is a personal playlist which means it is all of my personal taste, some other famous albums that can also be representative to the genre might not apply to my taste. So, it is double-sided, on one hand, these chosen tracks and albums are representative, but on the other hand, there are still many representative albums are excluded from this corpus. Most of the chosen albums are quite representative, but the “Tang Dynasty” is the most atypical one because it’s more on a metal side rather than the rock. Below is the list of chosen albums:
+
+English:
+1. “The Dark Side of the Moon” by Pink Floyd
+2. “Revolver” by The Beatles
+3. “Are You Experienced” by The Jimi Hendrix Experience
+4. “A Night at the Opera” by Queen
+5. “Rumour” by Fleetwood Mac
+
+Chinese:
+1. “Rock’n’roll on the New Long March” by Cui Jian
+2. “Black Dream” by Dou Wei
+3. “Omnipotent Youth Society” by Omnipotent Youth Society
+4. “Black Panther” by Black Panther
+5. “Tang Dynasty” by Tang Dynasty 
 
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Chart B
+### Fun Visualizations
 
 ```{r}
+library(tidyverse)
+library(spotifyr)
+library(compmus)
 
+girl <-
+  get_tidy_audio_analysis("6rfWywxF7VQEBig0KfGOpU") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+girl |>
+  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
+  theme_minimal() +
+  scale_fill_viridis_c()
+
+
+
+Shi <-
+  get_tidy_audio_analysis("2oSyibxNEOnHUYh1J0xNYX") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+Shi |>
+  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
+  theme_minimal() +
+  scale_fill_viridis_c()
+
+Bohe <-
+  get_tidy_audio_analysis("4u7EnebtmKWzUH433cf5Qv") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+Bohe |>
+  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
+  theme_minimal() +
+  scale_fill_viridis_c()
+
+
+Time <-
+  get_tidy_audio_analysis("4xHWH1jwV5j4mBYRhxPbwZ") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+Time |>
+  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
+  theme_minimal() +
+  scale_fill_viridis_c()
 ```
 
-### Chart C
+***
+
+### Some Conclusion and discussions
 
 ```{r}
 
