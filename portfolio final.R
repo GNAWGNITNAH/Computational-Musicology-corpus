@@ -3,15 +3,9 @@ install.packages('tidyverse')
 install.packages('knitr',dependencies = TRUE)
 install.packages('ggjoy')
 install.packages("ggplot2",dependencies = TRUE)
-
+--------------------------------------------------------------------------------
 library(tidyverse)
 library(spotifyr)
-
-revolver <- get_album_tracks("3PRoXYsngSwjEQWR5PsHWR")
-the_dark_side_of_the_moon <- get_album_tracks("2WT1pbYjLJciAR26yMebkH")
-are_you_experienced <- get_album_tracks("7rSZXXHHvIhF4yUFdaOCy9")
-a_night_at_the_opera<- get_album_tracks("1GbtB4zTqAsyfZEsm1RZfx")
-rumours <- get_album_tracks("1bt6q2SruMsBtcerNVtpZB")
 
 English_rock <-
   bind_rows(
@@ -22,12 +16,6 @@ English_rock <-
     rumours |> mutate(category = "E_rock5")
   )
 
-Rocknroll_on_the_new_long_march <- get_album_tracks("28vZ0gCHZ3Me1c8chHt4LF")
-black_dream <- get_album_tracks("3zpWCeI1YrALZLyD4KhSYX")
-omnipotent_youth_society <- get_album_tracks("6gApmv7Klo2uuyTxWkPzXb")
-black_panther <- get_album_tracks( "33dKa7Yept397zPl3myqoz")
-tang_dynasty <- get_album_tracks( "20ygpcBZI24gCEE2aGuyvn")
-
 Chinese_rock <-
   bind_rows(
     Rocknroll_on_the_new_long_march |> mutate(category = "C_rock1"),
@@ -37,42 +25,74 @@ Chinese_rock <-
     tang_dynasty |> mutate(category = "C_rock5")
   )
 
+
 Chinese_and_English_Rock <- get_playlist_audio_features("", "2NEXYKUJSm74TMdKyOdWbY")
 Chinese_Rock <- get_playlist_audio_features("", "2NeZgBftsdK7fFZcu67aUW")
 English_Rock <- get_playlist_audio_features("", "3PImZaqq5HuQxKHHhiXYaN")
 
-instrumentalness <-
+C_and_E_rock <-
   bind_rows(
-    Chinese_Rock |> mutate(category = "C_rock"),
-    English_Rock |> mutate(category = "E_rock")
+    Chinese_rock |> mutate(category = "Chinese_Rock"),
+    English_rock |> mutate(category = "English_Rock")
   )
 
-instrumentalness |>                   
-  mutate(mode = ifelse(mode == 0, "C_rock", "E_rock")) |>
-  ggplot(aes(x = instrumentalness, y = speechiness, size = loudness, colour = mode))+
-  geom_point() +             
-  geom_rug(linewidth = 0.1) + 
-  geom_text(aes(x = instrumentalness,y = speechiness),category = c("C_rock", "E_rock"), instrumentalness = c(0.090, 0.123), 
-            speechiness = c(0.101, 0.967)),
-colour = "black", size = 3, hjust = "left", vjust = "bottom", nudge_x = -0.05, nudge_y = 0.02) +
-  facet_wrap(~ category) +
-  scale_x_continuous( limits = c(0, 1), breaks = c(0, 0.50, 1), minor_breaks = NULL) +
-  scale_y_continuous( limits = c(0, 1),breaks = c(0, 0.50, 1),minor_breaks = NULL) +
-  scale_colour_brewer( type = "qual", palette = "Paired") +
-  scale_size_continuous(trans = "exp",guide = "none") +
-  theme_light() +             
-  labs( x = "instrumentalness", y = "speechiness",colour = "Mode")    
+ C_and_E_rock |>                   
+   mutate(
+     mode = ifelse(mode == 0, "", "")
+   ) |>
+   ggplot(                    
+     aes(
+       x = acousticness,
+       y = instrumentalness,
+       size = loudness,
+       colour = mode
+     )
+   ) +
+   geom_point() +              # Scatter plot.
+   geom_rug(linewidth = 0.1) + # Add 'fringes' to show data distribution.
+   geom_text(                  # Add text labels from above.
+     aes(
+       x = valence,
+       y = energy,
+       label = label
+     ),
+     data = 
+       tibble(
+         label = c("Altijd wel iemand", "ENERGY"),
+         category = c("Edisons", "Grammys"),
+         valence = c(0.090, 0.123),
+         energy = c(0.101, 0.967)
+       ),
+     colour = "black",         # Override colour (not mode here).
+     size = 3,                 # Override size (not loudness here).
+     hjust = "left",           # Align left side of label with the point.
+     vjust = "bottom",         # Align bottom of label with the point.
+     nudge_x = -0.05,          # Nudge the label slightly left.
+     nudge_y = 0.02            # Nudge the label slightly up.
+   ) +
+   facet_wrap(~ category) +    # Separate charts per playlist.
+   scale_x_continuous(         # Fine-tune the x axis.
+     limits = c(0, 1),
+     breaks = c(0, 0.50, 1),   # Use grid-lines for quadrants only.
+     minor_breaks = NULL       # Remove 'minor' grid-lines.
+   ) +
+   scale_y_continuous(         # Fine-tune the y axis in the same way.
+     limits = c(0, 1),
+     breaks = c(0, 0.50, 1),
+     minor_breaks = NULL
+   ) +
+   scale_colour_brewer(        # Use the Color Brewer to choose a palette.
+     type = "qual",            # Qualitative set.
+     palette = "Paired"        # Name of the palette is 'Paired'.
+   ) +
+   scale_size_continuous(      # Fine-tune the sizes of each point.
+     trans = "exp",            # Use an exp transformation to emphasise loud.
+     guide = "none"            # Remove the legend for size.
+   ) +
+   theme_light() +             # Use a simpler theme.
+   labs(                       # Make the titles nice.
+     x = "Valence",
+     y = "Energy",
+     colour = "Mode"
+   )
 
-instrumentalness |>
-  ggplot(
-    aes(x = instrumentalness, y = speechiness)) +
-  geom_smooth() +
-  facet_wrap(~category)
-
-
-
-
-
-
-
-install.packages("flexdashboard")
